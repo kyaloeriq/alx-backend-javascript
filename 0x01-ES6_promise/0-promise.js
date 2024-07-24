@@ -6,4 +6,5 @@ function getResponseFromAPI() {
   });
 }
 
+
 export { getResponseFromAPI };

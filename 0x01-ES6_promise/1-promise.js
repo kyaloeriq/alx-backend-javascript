@@ -12,4 +12,3 @@ function getFullResponseFromAPI(success) {
 }
 
 module.exports = { getFullResponseFromAPI };
-

@@ -14,4 +14,4 @@ function handleResponseFromAPI(promise) {
     });
 }
 
-export { handleResponseFromAPI };
+export default handleResponseFromAPI;

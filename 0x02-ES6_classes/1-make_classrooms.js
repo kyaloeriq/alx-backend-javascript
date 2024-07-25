@@ -1,9 +1,11 @@
 // Import the ClassRoom class from 0-classroom.js
 import ClassRoom from './0-classroom.js';
 
-// Function to initialize an array of ClassRoom objects
+/**
+ * Initializes an array of ClassRoom objects with specified sizes.
+ * @returns {ClassRoom[]} Array of ClassRoom objects with sizes 19, 20, and 34.
+ */
 function initializeRooms() {
-  // Create an array with three ClassRoom objects with the specified sizes
   return [
     new ClassRoom(19),
     new ClassRoom(20),

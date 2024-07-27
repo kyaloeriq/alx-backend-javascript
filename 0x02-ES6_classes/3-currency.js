@@ -36,14 +36,4 @@ class Currency {
   }
 }
 
-// Example usage:
-const currency = new Currency('USD', 'United States Dollar');
-console.log(currency.displayFullCurrency()); // Output: United States Dollar (USD)
-
-currency.code = 'EUR';
-currency.name = 'Euro';
-console.log(currency.displayFullCurrency()); // Output: Euro (EUR)
-
-// Uncomment the following lines to see the type checking in action
-// currency.code = 123; // Throws TypeError: Code must be a string
-// currency.name = {}; // Throws TypeError: Name must be a string
+module.exports = Currency;

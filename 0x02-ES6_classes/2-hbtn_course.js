@@ -45,22 +45,4 @@ class HolbertonCourse {
   }
 }
 
-// Example usage:
-const course = new HolbertonCourse('JavaScript', 12, ['Alice', 'Bob', 'Charlie']);
-console.log(course.name); // Output: JavaScript
-console.log(course.length); // Output: 12
-console.log(course.students); // Output: ['Alice', 'Bob', 'Charlie']
-
-course.name = 'Python';
-course.length = 14;
-course.students = ['Dave', 'Eva'];
-console.log(course.name); // Output: Python
-console.log(course.length); // Output: 14
-console.log(course.students); // Output: ['Dave', 'Eva']
-
-// Uncomment the following lines to see the type checking in action
-// course.name = 123; // Throws TypeError: Name must be a string
-// course.length = 'long'; // Throws TypeError: Length must be a number
-// course.students = 'Alice'; // Throws TypeError: Students must be an array of strings
-// course.students = [123, 'Bob']; // Throws TypeError: Students must be an array of strings
-
+module.exports = HolbertonCourse;

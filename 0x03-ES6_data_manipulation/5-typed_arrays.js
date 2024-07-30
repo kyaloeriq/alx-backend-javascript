@@ -3,7 +3,7 @@
  * @param {number} length - The length of the ArrayBuffer.
  * @param {number} position - The position in the buffer to set the value.
  * @param {number} value - The Int8 value to set at the specified position.
- * @returns {Uint8Array} - The typed array view of the ArrayBuffer.
+ * @returns {Int8Array} - The typed array view of the ArrayBuffer.
  * @throws {Error} - Throws an error if the position is outside the range.
  */
 function createInt8TypedArray(length, position, value) {

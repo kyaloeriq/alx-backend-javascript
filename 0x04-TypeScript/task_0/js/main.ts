@@ -1,4 +1,4 @@
-// Define the Student interface
+// Defines the Student interface
 interface Student {
   firstName: string;
   lastName: string;
@@ -6,7 +6,7 @@ interface Student {
   location: string;
 }
 
-// Create two student objects
+// Creates two student objects
 const student1: Student = {
   firstName: 'John',
   lastName: 'Doe',
@@ -21,10 +21,10 @@ const student2: Student = {
   location: 'Los Angeles'
 };
 
-// Create an array containing the student objects
+// Creates an array containing the student objects
 const studentsList: Student[] = [student1, student2];
 
-// Render a table using Vanilla JavaScript
+// Renders a table using Vanilla JavaScript
 const table = document.createElement('table');
 const tableHead = document.createElement('thead');
 const headerRow = document.createElement('tr');

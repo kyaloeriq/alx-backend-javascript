@@ -10,13 +10,13 @@ import uploadPhoto from './5-photo-reject.js';
  * @returns {Promise<Array>} - A promise that resolves to an array with the results of both promises.
  */
 export default async function handleProfileSignup(firstName, lastName, fileName) {
-    const signUpPromise = signUpUser(firstName, lastName);
-    const uploadPhotoPromise = uploadPhoto(fileName);
+  const signUpPromise = signUpUser(firstName, lastName);
+  const uploadPhotoPromise = uploadPhoto(fileName);
 
-    const results = await Promise.allSettled([signUpPromise, uploadPhotoPromise]);
+  const results = await Promise.allSettled([signUpPromise, uploadPhotoPromise]);
 
-    return results.map((result) => ({
-        status: result.status,
-        value: result.status === 'fulfilled' ? result.value : `${result.reason}`,
-    }));
+  return results.map((result) => ({
+    status: result.status,
+    value: result.status === 'fulfilled' ? result.value : String(result.reason),
+  }));
 }

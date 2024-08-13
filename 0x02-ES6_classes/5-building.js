@@ -7,6 +7,7 @@ class Building {
     this._sqft = sqft;
   }
 
+  // Getter for sqft attribute
   get sqft() {
     return this._sqft;
   }

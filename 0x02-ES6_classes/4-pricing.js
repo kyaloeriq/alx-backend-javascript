@@ -1,5 +1,5 @@
 // Define the Pricing class to handle amount and currency calculations.
-const Currency = require('./3-currency.js');
+
 
 class Pricing {
   constructor(amount, currency) {

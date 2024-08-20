@@ -12,8 +12,7 @@ class Building {
     return this._sqft;
   }
 
-  // Ensure that any class extending Building implements evacuationWarningMessage
-  // eslint-disable-next-line class-methods-use-this
+  // Method to be overridden in derived classes
   evacuationWarningMessage() {
     throw new Error('Class extending Building must override evacuationWarningMessage');
   }

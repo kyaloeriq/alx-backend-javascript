@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Import required 'fs' module
-const fs = require('fs').promises;
+const fs = require('fs');
 
 // Function to count students asynchronously
 function countStudents(path) {

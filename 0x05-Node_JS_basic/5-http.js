@@ -31,7 +31,8 @@ const app = http.createServer((req, res) => {
         res.end(output);
       })
       .catch((err) => {
-        res.end(err.message);
+	res.statusCode = 500; // Internal Server Error
+        res.end(err.message || 'Cannot load the database');
       });
   } else {
     // Handle unknown paths with a 404

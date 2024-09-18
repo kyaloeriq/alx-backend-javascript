@@ -2,7 +2,6 @@
 
 // Program to interact with user through command line
 
-function displayMessage() {
   process.stdout.write('Welcome to Holberton School, what is your name?\n');
 
   // Listen for user input
@@ -18,6 +17,3 @@ function displayMessage() {
   process.stdin.on('end', () => {
     console.log('This important software is now closing');
   });
-}
-
-module.exports = displayMessage;

@@ -6,7 +6,8 @@ describe('calculateNumber', () => {
   describe('SUM', () => {
     it('should return the sum of two rounded numbers', () => {
       assert.strictEqual(calculateNumber('SUM', 1.4, 4.5), 6);
-      assert.strictEqual(calculateNumber('SUM', 1.7, 3.2), 5);
+      assert.strictEqual(calculateNumber('SUM', 1.5, 3.7), 6);
+      assert.strictEqual(calculateNumber('SUM', 2.7, 3.2), 6);
     });
   });
 
@@ -14,6 +15,7 @@ describe('calculateNumber', () => {
     it('should return the subtraction of two rounded numbers', () => {
       assert.strictEqual(calculateNumber('SUBTRACT', 5.5, 1.4), 4);
       assert.strictEqual(calculateNumber('SUBTRACT', 3.9, 2.9), 1);
+      assert.strictEqual(calculateNumber('SUBTRACT', 10.1, 2.8), 7);
     });
   });
 
@@ -29,7 +31,7 @@ describe('calculateNumber', () => {
   });
 
   describe('Invalid type', () => {
-    it('should throw an error for an invalid type', () => {
+    it('should throw an error for an invalid operation type', () => {
       assert.throws(() => calculateNumber('MULTIPLY', 1.4, 4.5), /Invalid operation type/);
     });
   });

@@ -13,6 +13,7 @@ async function countStudents(database) {
     const data = await readFileAsync(database, 'utf8');
     const lines = data.split('\n').filter((line) => line.trim() !== ''); // Filter out empty lines
     const students = {};
+    let totalStudents = 0;
 
     lines.forEach((line) => {
       const [firstname, , , field] = line.split(','); // Ignore lastname and age
@@ -21,10 +22,10 @@ async function countStudents(database) {
           students[field] = [];
         }
         students[field].push(firstname);
+        totalStudents += 1; // Increment the student count
       }
     });
 
-    const totalStudents = lines.length;
     let result = `Number of students: ${totalStudents}\n`;
     for (const field in students) {
       if (Object.prototype.hasOwnProperty.call(students, field)) {
@@ -58,7 +59,7 @@ const app = http.createServer(async (req, res) => {
       res.end(`This is the list of our students\n${studentList}`);
     } catch (error) {
       res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.end(error.message);
+      res.end('Cannot load the database');
     }
   } else {
     // For any other path, return 404 Not Found

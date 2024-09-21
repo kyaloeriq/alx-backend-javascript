@@ -2,49 +2,71 @@
 
 // Import the required modules
 const http = require('http');
-const countStudents = require('./3-read_file_async');
-const url = require('url');
+const fs = require('fs');
+const { promisify } = require('util');
+const readFileAsync = promisify(fs.readFile);
 
-// The database file path should be provided as a command-line argument
-const databaseFile = process.argv[2];
+// Helper function to read the CSV file and process student data
+async function countStudents(database) {
+  try {
+    const data = await readFileAsync(database, 'utf8');
+    const lines = data.split('\n').filter((line) => line.trim() !== ''); // Filter out empty lines
+    const header = lines.shift(); // Remove the header line
+    const students = {};
 
-// Create the server
-const app = http.createServer((req, res) => {
-  const parsedUrl = url.parse(req.url, true);
+    lines.forEach((line) => {
+      const [firstname, lastname, age, field] = line.split(',');
+      if (field && field.trim() !== '') {
+        if (!students[field]) {
+          students[field] = [];
+        }
+        students[field].push(firstname);
+      }
+    });
 
-  // Set header for plain text response
-  res.setHeader('Content-Type', 'text/plain');
+    const totalStudents = lines.length;
+    let result = `Number of students: ${totalStudents}\n`;
+    for (const field in students) {
+      result += `Number of students in ${field}: ${students[field].length}. List: ${students[field].join(', ')}\n`;
+    }
 
-  // Root URL "/"
-  if (parsedUrl.pathname === '/') {
-    res.statusCode = 200;
-    res.end('Hello Holberton School!');
+    return result.trim();
+  } catch (error) {
+    throw new Error('Cannot load the database');
   }
-  // "/students" URL to fetch students from the CSV database
-  else if (parsedUrl.pathname === '/students') {
-    res.statusCode = 200;
-    res.write('This is the list of our students\n');
-    
-    // Call countStudents to fetch and display the student data
-    countStudents(databaseFile)
-      .then((output) => {
-        res.end(output);
-      })
-      .catch((err) => {
-	res.statusCode = 500; // Internal Server Error
-        res.end(err.message || 'Cannot load the database');
-      });
+}
+
+// Create the server function
+const app = http.createServer(async (req, res) => {
+  if (req.url === '/') {
+    // If the path is "/", respond with "Hello Holberton School!"
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Hello Holberton School!');
+  } else if (req.url === '/students') {
+    // If the path is "/students", return the student list
+    const database = process.argv[2]; // The database file is passed as an argument
+    if (!database) {
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('Database argument is missing.');
+      return;
+    }
+    try {
+      const studentList = await countStudents(database);
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end(`This is the list of our students\n${studentList}`);
+    } catch (error) {
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end(error.message);
+    }
   } else {
-    // Handle unknown paths with a 404
-    res.statusCode = 404;
+    // For any other path, return 404 Not Found
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not Found');
   }
 });
 
-// Server listens on port 1245
-app.listen(1245, () => {
-  console.log('Server listening on port 1245...');
-});
+// The server listens on port 1245
+app.listen(1245);
 
-// Export the server for external usage or testing
+// Export the server instance
 module.exports = app;

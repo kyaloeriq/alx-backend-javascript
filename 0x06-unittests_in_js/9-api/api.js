@@ -1,17 +1,15 @@
+// api.js
+
 const express = require('express');
 const app = express();
+const port = 3000;
 
-// Listen on port 7865
-const port = 7865;
-app.listen(port, () => {
-  console.log(`API available on localhost port ${port}`);
-});
-
-// Define a GET route for the root ('/') endpoint
+// Route GET /
 app.get('/', (req, res) => {
-  res.send('Welcome to the payment system');
+    res.status(200).send('Welcome to the payment system');
 });
 
+// Route GET /cart/:id
 app.get('/cart/:id([0-9]+)', (req, res) => {
     const cartId = req.params.id;
     res.status(200).json({ message: `Payment methods for cart ${cartId}` });
@@ -26,5 +24,4 @@ app.listen(port, () => {
     console.log(`API listening on port ${port}`);
 });
 
-// Export the app for testing
 module.exports = app;

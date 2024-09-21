@@ -4,6 +4,7 @@
 const http = require('http');
 const fs = require('fs');
 const { promisify } = require('util');
+
 const readFileAsync = promisify(fs.readFile);
 
 // Helper function to read the CSV file and process student data
@@ -11,13 +12,12 @@ async function countStudents(database) {
   try {
     const data = await readFileAsync(database, 'utf8');
     const lines = data.split('\n').filter((line) => line.trim() !== ''); // Filter out empty lines
-    const header = lines.shift(); // Remove the header line
     const students = {};
 
     lines.forEach((line) => {
-      const [firstname, lastname, age, field] = line.split(',');
+      const [firstname, , , field] = line.split(','); // Ignore lastname and age
       if (field && field.trim() !== '') {
-        if (!students[field]) {
+        if (!Object.prototype.hasOwnProperty.call(students, field)) {
           students[field] = [];
         }
         students[field].push(firstname);
@@ -27,7 +27,9 @@ async function countStudents(database) {
     const totalStudents = lines.length;
     let result = `Number of students: ${totalStudents}\n`;
     for (const field in students) {
-      result += `Number of students in ${field}: ${students[field].length}. List: ${students[field].join(', ')}\n`;
+      if (Object.prototype.hasOwnProperty.call(students, field)) {
+        result += `Number of students in ${field}: ${students[field].length}. List: ${students[field].join(', ')}\n`;
+      }
     }
 
     return result.trim();

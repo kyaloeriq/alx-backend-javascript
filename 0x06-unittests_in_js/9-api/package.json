@@ -13,7 +13,8 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^6.2.2",
+    "chai-http": "^5.0.0",
+    "mocha": "^10.7.3",
     "request": "^2.88.0",
     "sinon": "^7.5.0"
   }

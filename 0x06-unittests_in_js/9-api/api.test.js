@@ -1,36 +1,42 @@
-const request = require('request');
-const { expect } = require('chai');
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const app = require('./api');  // Import your Express app
+const { expect } = chai;
 
-describe('Index page', () => {
-  const url = 'http://localhost:7865/';
+chai.use(chaiHttp);
 
-  it('should return status code 200', (done) => {
-    request(url, (error, response, body) => {
-      expect(response.statusCode).to.equal(200);
-      done();
+describe('API Tests', () => {
+  describe('GET /', () => {
+    it('should return Welcome to the payment system', (done) => {
+      chai.request(app)
+        .get('/')
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.text).to.equal('Welcome to the payment system');
+          done();
+        });
     });
   });
 
-  it('should return the correct message', (done) => {
-    request(url, (error, response, body) => {
-      expect(body).to.equal('Welcome to the payment system');
-      done();
+  describe('GET /cart/:id', () => {
+    it('should return Payment methods for cart :id when id is valid', (done) => {
+      chai.request(app)
+        .get('/cart/12')
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.text).to.equal('Payment methods for cart 12');
+          done();
+        });
     });
-  });
 
-  describe('Cart page', () => {
-  it('should return status code 200 when :id is a number', (done) => {
-    request('http://localhost:7865/cart/12', (error, response, body) => {
-      expect(response.statusCode).to.equal(200);
-      expect(body).to.equal('Payment methods for cart 12');
-      done();
-    });
-  });
-
-  it('should return status code 404 when :id is NOT a number', (done) => {
-    request('http://localhost:7865/cart/hello', (error, response, body) => {
-      expect(response.statusCode).to.equal(404);
-      done();
+    it('should return 404 for invalid cart id', (done) => {
+      chai.request(app)
+        .get('/cart/hello')
+        .end((err, res) => {
+          expect(res).to.have.status(404);
+          expect(res.text).to.include('Cannot GET /cart/hello');
+          done();
+        });
     });
   });
 });

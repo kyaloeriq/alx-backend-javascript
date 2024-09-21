@@ -1,17 +1,30 @@
 const express = require('express');
 const app = express();
 
-// Route for valid cart IDs
-app.get('/cart/:id(\\d+)', (req, res) => {
-  const id = req.params.id;
-  res.send(`Payment methods for cart ${id}`);
+// Listen on port 7865
+const port = 7865;
+app.listen(port, () => {
+  console.log(`API available on localhost port ${port}`);
 });
 
-// Default error handler for invalid routes (404 Not Found)
-app.use((req, res) => {
-  res.status(404).send('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Error</title></head><body><pre>Cannot GET ' + req.url + '</pre></body></html>');
+// Define a GET route for the root ('/') endpoint
+app.get('/', (req, res) => {
+  res.send('Welcome to the payment system');
 });
 
-app.listen(7865, () => {
-  console.log('API available on localhost port 7865');
+app.get('/cart/:id([0-9]+)', (req, res) => {
+    const cartId = req.params.id;
+    res.status(200).json({ message: `Payment methods for cart ${cartId}` });
 });
+
+// Handle invalid :id (not a number)
+app.get('/cart/:id', (req, res) => {
+    res.status(404).json({ error: 'Cart ID must be a number' });
+});
+
+app.listen(port, () => {
+    console.log(`API listening on port ${port}`);
+});
+
+// Export the app for testing
+module.exports = app;

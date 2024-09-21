@@ -56,10 +56,16 @@ app.get('/students', (req, res) => {
       const totalStudents = Object.values(studentsByField).reduce((acc, students) => acc + students.length, 0);
       response += `Number of students: ${totalStudents}\n`;
 
-      for (const field in studentsByField) {
+      const fields = Object.keys(studentsByField);
+      fields.forEach((field, index) => {
         const studentNames = studentsByField[field].join(', ');
-        response += `Number of students in ${field}: ${studentsByField[field].length}. List: ${studentNames}\n`;
-      }
+        response += `Number of students in ${field}: ${studentsByField[field].length}. List: ${studentNames}`;
+        
+        // Add a newline only if it's not the last field
+        if (index !== fields.length - 1) {
+          response += '\n';
+        }
+      });
 
       res.set('Content-Type', 'text/plain');
       res.send(response);

@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 // Route GET /cart/:id
 app.get('/cart/:id([0-9]+)', (req, res) => {
     const cartId = req.params.id;
-    res.status(200).json({ message: `Payment methods for cart ${cartId}` });
+    res.status(200).send(`Payment methods for cart ${cartId}`);
 });
 
 // Handle invalid :id (not a number)

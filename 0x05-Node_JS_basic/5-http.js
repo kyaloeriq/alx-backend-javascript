@@ -11,7 +11,7 @@ const readFileAsync = promisify(fs.readFile);
 async function countStudents(database) {
   try {
     const data = await readFileAsync(database, 'utf8');
-    const lines = data.split('\n').filter((line) => line.trim() !== ''); // Filter out empty lines
+    const lines = data.split('\n').filter((line) => line.trim() !== '' && !line.startsWith('firstname')); // Filter out empty lines and header
     const students = {};
     let totalStudents = 0;
 
@@ -73,3 +73,4 @@ app.listen(1245);
 
 // Export the server instance
 module.exports = app;
+

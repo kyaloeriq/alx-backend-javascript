@@ -3,11 +3,17 @@
 const request = require('supertest');
 const app = require('./api');
 
-describe('Test root route', () => {
-    it('GET / should return "Welcome to the payment system"', async () => {
+// api.test.js
+
+const request = require('supertest');
+const app = require('./api');  // Import the Express app
+
+// Test suite for root route
+describe('GET /', () => {
+    it('should return "Welcome to the payment system"', async () => {
         const res = await request(app).get('/');
-        expect(res.statusCode).toEqual(200);
-        expect(res.text).toBe('Welcome to the payment system');
+        expect(res.statusCode).toEqual(200);    // Check status code
+        expect(res.text).toBe('Welcome to the payment system');    // Check response body
     });
 });
 

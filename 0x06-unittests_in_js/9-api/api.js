@@ -6,7 +6,7 @@ const port = 7865;
 
 // Route GET /
 app.get('/', (req, res) => {
-    res.status(200).send(`Welcome to the payment system`);
+    res.status(200).send('Welcome to the payment system');
 });
 
 // Route GET /cart/:id

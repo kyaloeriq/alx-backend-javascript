@@ -61,11 +61,12 @@ app.get('/students', async (req, res) => {
       responseText += studentList;
       res.status(200).send(responseText);
     } catch (error) {
+      // Handle the error correctly by returning a 500 status and the appropriate message
       res.status(500).send('Cannot load the database');
     }
   } else {
-    // No database provided
-    res.status(200).send(responseText);
+    // No database provided, just respond with the initial text
+    res.status(500).send('Cannot load the database');
   }
 });
 

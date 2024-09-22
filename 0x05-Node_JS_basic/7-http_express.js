@@ -1,85 +1,78 @@
 #!/usr/bin/env node
 
-// Import required modules
+// Import the required modules
 const express = require('express');
 const fs = require('fs');
-const path = require('path');
+const { promisify } = require('util');
 
-// Create an instance of an Express app
+// Promisify the fs.readFile function for async file reading
+const readFileAsync = promisify(fs.readFile);
+
+// Initialize an Express application
 const app = express();
 
-// Helper function to read the CSV file and format the student data
-function readDatabase(dbPath) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(dbPath, 'utf8', (err, data) => {
-      if (err) {
-        reject(new Error('Cannot load the database'));
-      } else {
-        const lines = data.trim().split('\n').filter((line) => line !== '');
-        if (lines.length <= 1) {
-          reject(new Error('Cannot load the database'));
-          return;
+// Helper function to count students from the CSV database
+async function countStudents(database) {
+  try {
+    const data = await readFileAsync(database, 'utf8');
+    const lines = data.split('\n').filter((line) => line.trim() !== '' && !line.startsWith('firstname')); // Ignore empty lines and header
+
+    const students = {};
+    let totalStudents = 0;
+
+    lines.forEach((line) => {
+      const [firstname, , , field] = line.split(','); // We only care about firstname and field
+      if (field && field.trim() !== '') {
+        if (!students[field]) {
+          students[field] = [];
         }
-
-        const fields = lines.slice(1).map((line) => {
-          const [firstname, lastname, age, field] = line.split(',');
-          return { firstname, lastname, age, field };
-        });
-
-        const studentsByField = fields.reduce((acc, student) => {
-          if (!acc[student.field]) {
-            acc[student.field] = [];
-          }
-          acc[student.field].push(student.firstname);
-          return acc;
-        }, {});
-
-        resolve(studentsByField);
+        students[field].push(firstname);
+        totalStudents += 1;
       }
     });
-  });
+
+    let result = `Number of students: ${totalStudents}\n`;
+    for (const field in students) {
+      if (students[field]) {
+        result += `Number of students in ${field}: ${students[field].length}. List: ${students[field].join(', ')}\n`;
+      }
+    }
+
+    return result.trim();
+  } catch (error) {
+    throw new Error('Cannot load the database');
+  }
 }
 
-// Route for the root ("/") URL
+// Define the root URL path handler
 app.get('/', (req, res) => {
-  res.send('Hello Holberton School!');
+  res.status(200).send('Hello Holberton School!');
 });
 
-// Route for the "/students" URL
-app.get('/students', (req, res) => {
-  const dbPath = process.argv[2]; // Get the CSV file path from command-line arguments
+// Define the /students URL path handler
+app.get('/students', async (req, res) => {
+  const database = process.argv[2]; // The database file should be passed as an argument
 
-  readDatabase(dbPath)
-    .then((studentsByField) => {
-      let response = 'This is the list of our students\n';
+  let responseText = 'This is the list of our students\n';
 
-      const totalStudents = Object.values(studentsByField).reduce((acc, students) => acc + students.length, 0);
-      response += `Number of students: ${totalStudents}\n`;
-
-      const fields = Object.keys(studentsByField);
-      fields.forEach((field, index) => {
-        const studentNames = studentsByField[field].join(', ');
-        response += `Number of students in ${field}: ${studentsByField[field].length}. List: ${studentNames}`;
-        
-        // Add a newline only if it's not the last field
-        if (index !== fields.length - 1) {
-          response += '\n';
-        }
-      });
-
-      res.set('Content-Type', 'text/plain');
-      res.send(response);
-    })
-    .catch((err) => {
-      res.set('Content-Type', 'text/plain');
-      res.send(err.message);
-    });
+  if (database) {
+    try {
+      const studentList = await countStudents(database);
+      responseText += studentList;
+      res.status(200).send(responseText);
+    } catch (error) {
+      res.status(500).send('Cannot load the database');
+    }
+  } else {
+    // No database provided
+    res.status(200).send(responseText);
+  }
 });
 
-// The app listens on port 1245
+// Set the app to listen on port 1245
 app.listen(1245, () => {
-  console.log('Server is running on http://localhost:1245');
+  console.log('Server listening on port 1245');
 });
 
-// Export the Express app instance
-module.exports = app
+// Export the app for testing or further usage
+module.exports = app;

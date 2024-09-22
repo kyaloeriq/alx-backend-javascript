@@ -5,30 +5,32 @@ const http = require('http');
 const fs = require('fs');
 const { promisify } = require('util');
 
+// Promisify the fs.readFile function for async file reading
 const readFileAsync = promisify(fs.readFile);
 
-// Helper function to read the CSV file and process student data
+// Helper function to count students from the CSV database
 async function countStudents(database) {
   try {
     const data = await readFileAsync(database, 'utf8');
-    const lines = data.split('\n').filter((line) => line.trim() !== '' && !line.startsWith('firstname')); // Filter out empty lines and header
+    const lines = data.split('\n').filter((line) => line.trim() !== '' && !line.startsWith('firstname')); // Ignore empty lines and header
+
     const students = {};
     let totalStudents = 0;
 
     lines.forEach((line) => {
-      const [firstname, , , field] = line.split(','); // Ignore lastname and age
+      const [firstname, , , field] = line.split(','); // We only care about firstname and field
       if (field && field.trim() !== '') {
-        if (!Object.prototype.hasOwnProperty.call(students, field)) {
+        if (!students[field]) {
           students[field] = [];
         }
         students[field].push(firstname);
-        totalStudents += 1; // Increment the student count
+        totalStudents += 1;
       }
     });
 
     let result = `Number of students: ${totalStudents}\n`;
     for (const field in students) {
-      if (Object.prototype.hasOwnProperty.call(students, field)) {
+      if (students[field]) {
         result += `Number of students in ${field}: ${students[field].length}. List: ${students[field].join(', ')}\n`;
       }
     }
@@ -39,30 +41,31 @@ async function countStudents(database) {
   }
 }
 
-// Create the server function
+// Create the server
 const app = http.createServer(async (req, res) => {
   if (req.url === '/') {
-    // If the path is "/", respond with "Hello Holberton School!"
+    // For the root URL (/), return the welcome message
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Hello Holberton School!');
   } else if (req.url === '/students') {
-    // If the path is "/students", return the student list
-    const database = process.argv[2]; // The database file is passed as an argument
-    if (!database) {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.end('Database argument is missing.');
-      return;
-    }
-    try {
-      const studentList = await countStudents(database);
-      res.writeHead(200, { 'Content-Type': 'text/plain' });
-      res.end(`This is the list of our students\n${studentList}`);
-    } catch (error) {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.end('Cannot load the database');
+    // For the /students URL, return student list
+    const database = process.argv[2]; // The database file should be passed as an argument
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+
+    res.write('This is the list of our students\n');
+
+    if (database) {
+      try {
+        const studentList = await countStudents(database);
+        res.end(`${studentList}`);
+      } catch (error) {
+        res.end('Cannot load the database');
+      }
+    } else {
+      res.end('');
     }
   } else {
-    // For any other path, return 404 Not Found
+    // For other paths, return 404 Not Found
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not Found');
   }
@@ -71,6 +74,5 @@ const app = http.createServer(async (req, res) => {
 // The server listens on port 1245
 app.listen(1245);
 
-// Export the server instance
+// Export the app for testing or further usage
 module.exports = app;
-
